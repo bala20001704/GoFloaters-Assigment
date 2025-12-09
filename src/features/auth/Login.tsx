@@ -25,7 +25,6 @@ export default function LoginForm() {
   });
 
   const onSubmit = (data: loginDataType) => {
-    console.log(data);
     LoginMutate(data);
   };
 

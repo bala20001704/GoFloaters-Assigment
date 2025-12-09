@@ -37,8 +37,6 @@ export const useAuthUser = () => {
     retry: false,
   });
 
-  console.log("useAuthUser:::", authUser);
-
   return {
     isLoading: authUser.isLoading,
     authUser: authUser.data,
