@@ -1,3 +1,6 @@
+import useDebounce from "@/hooks/useDebounce";
+import { useSearchParams } from "react-router-dom";
+
 interface SearchInputProps {
   value: string;
   onChange: (text: string) => void;
@@ -5,6 +8,20 @@ interface SearchInputProps {
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, placeholder }) => {
+  const [searchParam, setSearchParam] = useSearchParams();
+
+  const handleInput = (newValue: string) => {
+    onChange(newValue);
+
+    if (newValue) {
+      searchParam.set("search", newValue);
+    } else {
+      searchParam.delete("search");
+    }
+
+    setSearchParam(searchParam);
+  };
+
   return (
     <div style={{ position: "relative", width: "250px" }}>
       <p className="text-gray-700 font-bold">Search Bar</p>
@@ -12,7 +29,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, placeholder 
         type="text"
         value={value}
         placeholder={placeholder || "Search products"}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => handleInput(e.target.value)}
         style={{
           width: "80%",
           padding: "8px 32px 8px 8px",
@@ -25,7 +42,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, placeholder 
         style={{
           position: "absolute",
           right: "60px",
-          top: "50%",
+          top: "70%",
           transform: "translateY(-50%)",
           background: "transparent",
           border: "none",

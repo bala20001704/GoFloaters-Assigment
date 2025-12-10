@@ -1,20 +1,31 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useFetchProduct } from "./hooks";
 import ProductCard from "./ProductCard";
 import FiltersSidebar from "./FiltersSidebar";
+import { useSearchParams } from "react-router-dom";
 
 const Home = () => {
-  const { data } = useFetchProduct("", "");
+  const [searchParam, setSearchParam] = useSearchParams();
+  const querySearch = searchParam.get("search") || "";
+  const queryCategory = searchParam.get("category") || "";
+  const queryStock = searchParam.get("stock") || "all";
+  const querysortBy = searchParam.get("sortby") || "price-asc";
+  const queryRatings = searchParam.get("ratings") || "";
 
-  const [search, setSearch] = useState("");
-  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-  const [stockFilter, setStockFilter] = useState<"all" | "in" | "low" | "out">("all");
-  const [sortBy, setSortBy] = useState<"price-asc" | "price-desc" | "rating" | "title">("price-asc");
-  const [category, setCategory] = useState("");
+  const initialRatings = queryRatings ? queryRatings.split(",").map((n) => Number(n)) : [];
+
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useFetchProduct(querySearch, queryCategory);
+
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  const [search, setSearch] = useState(querySearch);
+  const [selectedRatings, setSelectedRatings] = useState<number[]>(initialRatings);
+  const [stockFilter, setStockFilter] = useState<string>(queryStock);
+  const [sortBy, setSortBy] = useState<string>(querysortBy);
+  const [category, setCategory] = useState(queryCategory);
 
   const allProducts = data?.pages.flatMap((p) => p.products) || [];
 
-  /** FILTER PRODUCTS */
   const filtered = useMemo(() => {
     return allProducts
       .filter((p) => p.title.toLowerCase().includes(search.toLowerCase()))
@@ -28,9 +39,9 @@ const Home = () => {
       });
   }, [allProducts, search, selectedRatings, stockFilter, category]);
 
-  /** SORT PRODUCTS */
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
+      console.log("sort", sortBy);
       if (sortBy === "price-asc") return a.price - b.price;
       if (sortBy === "price-desc") return b.price - a.price;
       if (sortBy === "rating") return b.rating - a.rating;
@@ -39,9 +50,36 @@ const Home = () => {
     });
   }, [filtered, sortBy]);
 
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasNextPage) {
+        fetchNextPage();
+      }
+    });
+
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParam);
+
+    if (selectedRatings.length > 0) {
+      params.set("ratings", selectedRatings.join(","));
+    } else {
+      params.delete("ratings");
+    }
+
+    setSearchParam(params);
+  }, [selectedRatings]);
+
   return (
-    <div className="flex gap-6 p-4">
-      {/* LEFT FILTER SIDEBAR */}
+    <div className="w-full min-h-screen flex gap-6 p-4">
       <FiltersSidebar
         search={search}
         setSearch={setSearch}
@@ -55,11 +93,12 @@ const Home = () => {
         setCategory={setCategory}
       />
 
-      {/* RIGHT PRODUCTS GRID */}
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {sorted.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
+        <div ref={ref} className="col-span-full h-10" />
+        {isFetchingNextPage ? "Loding....." : null}
       </div>
     </div>
   );

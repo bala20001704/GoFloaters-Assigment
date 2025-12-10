@@ -1,13 +1,23 @@
+import { useSearchParams } from "react-router-dom";
+
 interface SortFilterProps {
-  sortBy: "price-asc" | "price-desc" | "rating" | "title";
-  onChange: (value: "price-asc" | "price-desc" | "rating" | "title") => void;
+  sortBy: string;
+  onChange: (value: string) => void;
 }
 
 const SortFilter: React.FC<SortFilterProps> = ({ sortBy, onChange }) => {
+  const [searchParam, setSearchParam] = useSearchParams();
   return (
     <div>
       <h3>Sort By</h3>
-      <select value={sortBy} onChange={(e) => onChange(e.target.value as any)}>
+      <select
+        value={sortBy}
+        onChange={(e) => {
+          onChange(e.target.value);
+          searchParam.set("sortby", e.target.value);
+          setSearchParam(searchParam);
+        }}
+      >
         <option value="price-asc">Price: Low to High</option>
         <option value="price-desc">Price: High to Low</option>
         <option value="rating">Rating</option>

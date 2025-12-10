@@ -11,11 +11,11 @@ interface FiltersSidebarProps {
   selectedRatings: number[];
   setSelectedRatings: (value: number[]) => void;
 
-  stockFilter: "all" | "in" | "low" | "out";
-  setStockFilter: (value: "all" | "in" | "low" | "out") => void;
+  stockFilter: string;
+  setStockFilter: (value: string) => void;
 
-  sortBy: "price-asc" | "price-desc" | "rating" | "title";
-  setSortBy: (value: "price-asc" | "price-desc" | "rating" | "title") => void;
+  sortBy: string;
+  setSortBy: (value: string) => void;
 
   category: string;
   setCategory: (value: string) => void;
@@ -35,7 +35,7 @@ export default function FiltersSidebar({
 }: FiltersSidebarProps) {
   console.log("stock", stockFilter);
   return (
-    <div className="w-60 flex flex-col gap-6 sticky top-4 h-fit border-r pr-4">
+    <div className="w-60 flex flex-col gap-6 top-4 h-fit pr-4">
       <SearchInput value={search} onChange={setSearch} />
       <RatingFilter selectedRatings={selectedRatings} onChange={setSelectedRatings} />
       <StockFilter stockFilter={stockFilter} onChange={setStockFilter} />
