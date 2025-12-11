@@ -96,7 +96,7 @@ const Home = () => {
       />
       {sorted.length <= 0 ? <ProductGridSkeleton /> : ""}
       <div className="grid grid-cols-4 auto-rows-max gap-5">
-        {sorted.map((p) => (
+        {sorted.slice(1, 4).map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
 

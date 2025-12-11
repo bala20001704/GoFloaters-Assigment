@@ -1,18 +1,14 @@
 import { useState } from "react";
 import type { Product } from "./types";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const [imgError, setImgError] = useState(false);
-
-  const discountedPrice = (product.price - (product.price * product.discountPercentage) / 100).toFixed(2);
-
-  const navigate = useNavigate();
-
   const getStockStatus = () => {
     if (product.stock === 0) return { label: "Out of Stock", color: "#dc2626" };
     if (product.stock <= 10) return { label: "Low Stock", color: "#f59e0b" };
@@ -36,51 +32,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="border rounded-xl p-3 flex flex-col gap-3 w-full max-h-96">
-      <div className="w-full h-40 rounded-lg overflow-hidden">
-        <img
-          src={imgError ? "/fallback.jpg" : product.thumbnail}
-          alt={product.title}
-          onError={() => setImgError(true)}
-          className="w-full h-full object-cover"
-        />
+    <div className="border border-gray-300 rounded-sm overflow-hidden">
+      <div className="w-full bg-gray-100 max-h-48 min-h-48 flex items-center justify-center">
+        <img src={product.thumbnail} alt="" width={190} height={190} className="object-contain h-fit" />
       </div>
-
-      <h3 style={{ fontSize: "16px", fontWeight: "bold" }}>{product.title}</h3>
-
-      <p style={{ color: "#555", fontSize: "14px" }}>{product.brand}</p>
-
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <span style={{ fontSize: "18px", fontWeight: "bold" }}>₹{discountedPrice}</span>
-
-        <span style={{ fontSize: "14px", color: "#6b7280" }}>
-          <s>₹{product.price}</s> <span style={{ color: "#dc2626" }}>({product.discountPercentage}% OFF)</span>
-        </span>
+      <div className="p-3">
+        <p className="font-bold text-gray-900 text-center mt-1">{product.title}</p>
+        <p>{product.brand}</p>
+        <div className="flex gap-4 mt-2">
+          <p className="font-bold text-sm">Price ₹{product.price}</p>
+          <p className="font-bold text-sm">discount {product.discountPercentage} % OFF</p>
+        </div>
+        <p className="flex gap-1 mt-3">Rating {renderStars(product.rating)}</p>
+        <Badge className="text-orange-900 mt-2" variant="secondary">
+          {product.stock} - stocks available
+        </Badge>
+        <div className="flex gap-2 mt-5 mx-auto">
+          <Button className="bg-blue-500 text-white hover:bg-blue-900 hover:text-white">View Button</Button>
+          <Button className="bg-orange-900 text-white hover:bg-orange-950 hover:text-white">Add Button</Button>
+        </div>
       </div>
-
-      {renderStars(product.rating)}
-
-      <span
-        style={{
-          alignSelf: "flex-start",
-          background: stock.color,
-          color: "white",
-          padding: "4px 8px",
-          borderRadius: "5px",
-          fontSize: "12px",
-        }}
-      >
-        {stock.label}
-      </span>
-      <button className="bg-green-200 text-black rounded p-1">Add to cart</button>
-      <button
-        className="bg-blue-600 text-black rounded p-1"
-        onClick={() => {
-          navigate(`/product/${product.id}`);
-        }}
-      >
-        View Details
-      </button>
     </div>
   );
 };
