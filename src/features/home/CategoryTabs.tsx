@@ -9,11 +9,10 @@ export const getCategoriesList = async (): Promise<string[]> => {
 
 interface CategoryTabsProps {
   selected: string;
-  onChange: (category: string) => void;
 }
 
-export function CategoryTabs({ selected, onChange }: CategoryTabsProps) {
-  const [searchParm, setSearchParam] = useSearchParams();
+export function CategoryTabs({ selected }: CategoryTabsProps) {
+  const [searchParam, setSearchParam] = useSearchParams();
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["categories"],
@@ -25,13 +24,15 @@ export function CategoryTabs({ selected, onChange }: CategoryTabsProps) {
   return (
     <div className="flex flex-col gap-3">
       <p className="font-medium text-gray-700">Categories</p>
+
       {categories.map((cat) => (
         <button
           key={cat}
           onClick={() => {
-            onChange(cat);
-            searchParm.set("category", cat);
-            setSearchParam(searchParm);
+            const params = new URLSearchParams(searchParam);
+            params.set("category", cat);
+            params.delete("search"); // reset search from URL
+            setSearchParam(params);
           }}
           className={`
             px-4 py-2 rounded-lg text-sm font-medium transition

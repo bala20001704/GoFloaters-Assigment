@@ -6,7 +6,6 @@ import { CategoryTabs } from "./CategoryTabs";
 
 interface FiltersSidebarProps {
   search: string;
-  setSearch: (value: string) => void;
 
   selectedRatings: number[];
   setSelectedRatings: (value: number[]) => void;
@@ -18,12 +17,10 @@ interface FiltersSidebarProps {
   setSortBy: (value: string) => void;
 
   category: string;
-  setCategory: (value: string) => void;
 }
 
 export default function FiltersSidebar({
   search,
-  setSearch,
   selectedRatings,
   setSelectedRatings,
   stockFilter,
@@ -31,16 +28,14 @@ export default function FiltersSidebar({
   sortBy,
   setSortBy,
   category,
-  setCategory,
 }: FiltersSidebarProps) {
-  console.log("stock", stockFilter);
   return (
     <div className="w-60 flex flex-col gap-6 top-4 h-fit pr-4">
-      <SearchInput value={search} onChange={setSearch} />
+      <SearchInput value={search} />
       <RatingFilter selectedRatings={selectedRatings} onChange={setSelectedRatings} />
       <StockFilter stockFilter={stockFilter} onChange={setStockFilter} />
       <SortFilter sortBy={sortBy} onChange={setSortBy} />
-      <CategoryTabs selected={category} onChange={setCategory} />
+      <CategoryTabs selected={category} />
     </div>
   );
 }

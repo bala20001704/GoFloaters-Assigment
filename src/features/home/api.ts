@@ -1,31 +1,27 @@
 import axiosInstance from "@/services/api/axios";
 import type { ProductsResponse } from "./types";
+import type { Product } from "./types";
+
+const LIMIT = 30;
 
 export const getProducts = async (pageParam: number): Promise<ProductsResponse> => {
-  const limit = 30;
   const skip = pageParam;
-  const res = await axiosInstance.get(`/products?limit=${limit}&skip=${skip}`);
-
-  console.log(res);
+  const res = await axiosInstance.get(`/products?limit=${LIMIT}&skip=${skip}`);
   return res.data;
 };
 
-export const getProductsSearch = async (query: string, pageParam: number): Promise<ProductsResponse> => {
-  const limit = 30;
+export const getProductsBySearch = async (query: string, pageParam: number): Promise<ProductsResponse> => {
   const skip = pageParam;
-  const res = await axiosInstance.get(`/products/search?q=${query}&limit=${limit}&skip=${skip}`);
+  const res = await axiosInstance.get(`/products/search?q=${query}&limit=${LIMIT}&skip=${skip}`);
 
-  console.log(res);
   return res.data;
 };
 
 export const getProductsCategory = async (query: string, pageParam: number): Promise<ProductsResponse> => {
-  const limit = 30;
   const skip = pageParam;
   const category = query.toLowerCase();
-
   const res = await axiosInstance.get(
-    `https://dummyjson.com/products/category/${category}?limit=${limit}&skip=${skip}`
+    `https://dummyjson.com/products/category/${category}?limit=${LIMIT}&skip=${skip}`
   );
 
   return res.data;
@@ -33,5 +29,10 @@ export const getProductsCategory = async (query: string, pageParam: number): Pro
 
 export const getCategoriesList = async (): Promise<string[]> => {
   const res = await axiosInstance.get("/products/category-list");
+  return res.data;
+};
+
+export const getProductById = async (productId: string): Promise<Product> => {
+  const res = await axiosInstance.get(`/products/${productId}`);
   return res.data;
 };

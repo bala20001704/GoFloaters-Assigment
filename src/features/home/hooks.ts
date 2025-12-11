@@ -1,5 +1,5 @@
 import { useInfiniteQuery, type InfiniteData } from "@tanstack/react-query";
-import { getProducts, getProductsCategory, getProductsSearch } from "./api";
+import { getProducts, getProductsCategory, getProductsBySearch } from "./api";
 import type { ProductsResponse } from "./types";
 
 const limits = 30;
@@ -15,13 +15,12 @@ export const useFetchProduct = (searchQuery: string, category: string) => {
     queryKey: ["products", searchQuery, category],
     queryFn: ({ pageParam = 0 }) => {
       if (searchQuery) {
-        return getProductsSearch(searchQuery, pageParam);
+        return getProductsBySearch(searchQuery, pageParam);
       }
 
       if (category) {
         return getProductsCategory(category, pageParam);
       }
-
       return getProducts(pageParam);
     },
     initialPageParam: 0,

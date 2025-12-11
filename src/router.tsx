@@ -4,6 +4,7 @@ import { LoaderIcon, Toaster } from "react-hot-toast";
 import { useAuthUser } from "./features/auth/hooks";
 import Home from "./features/home/Home";
 import Layout from "./components/Layout/Layout";
+import ProductView from "./features/home/ProductView";
 
 const Router = () => {
   const { authUser, isLoading } = useAuthUser();
@@ -30,6 +31,7 @@ const Router = () => {
             </Layout>
           }
         />
+        <Route path="/product/:id" element={<ProductView />}></Route>
       </Routes>
 
       <Toaster />

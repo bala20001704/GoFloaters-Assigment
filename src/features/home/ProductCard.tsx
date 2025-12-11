@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Product } from "./types";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   product: Product;
@@ -9,6 +10,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [imgError, setImgError] = useState(false);
 
   const discountedPrice = (product.price - (product.price * product.discountPercentage) / 100).toFixed(2);
+
+  const navigate = useNavigate();
 
   const getStockStatus = () => {
     if (product.stock === 0) return { label: "Out of Stock", color: "#dc2626" };
@@ -33,45 +36,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "10px",
-        padding: "12px",
-        width: "240px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-      }}
-    >
-      {/* Product Image */}
-      <div
-        style={{
-          width: "100%",
-          height: "150px",
-          overflow: "hidden",
-          borderRadius: "8px",
-        }}
-      >
+    <div className="border rounded-xl p-3 flex flex-col gap-3 w-full max-h-96">
+      <div className="w-full h-40 rounded-lg overflow-hidden">
         <img
           src={imgError ? "/fallback.jpg" : product.thumbnail}
           alt={product.title}
           onError={() => setImgError(true)}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
+          className="w-full h-full object-cover"
         />
       </div>
 
-      {/* Title */}
       <h3 style={{ fontSize: "16px", fontWeight: "bold" }}>{product.title}</h3>
 
-      {/* Brand */}
       <p style={{ color: "#555", fontSize: "14px" }}>{product.brand}</p>
 
-      {/* Price + discount */}
       <div style={{ display: "flex", flexDirection: "column" }}>
         <span style={{ fontSize: "18px", fontWeight: "bold" }}>₹{discountedPrice}</span>
 
@@ -80,10 +58,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </span>
       </div>
 
-      {/* Rating */}
       {renderStars(product.rating)}
 
-      {/* Stock Badge */}
       <span
         style={{
           alignSelf: "flex-start",
@@ -96,6 +72,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       >
         {stock.label}
       </span>
+      <button className="bg-green-200 text-black rounded p-1">Add to cart</button>
+      <button
+        className="bg-blue-600 text-black rounded p-1"
+        onClick={() => {
+          navigate(`/product/${product.id}`);
+        }}
+      >
+        View Details
+      </button>
     </div>
   );
 };

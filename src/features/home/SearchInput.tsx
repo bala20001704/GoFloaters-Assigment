@@ -1,58 +1,47 @@
-import useDebounce from "@/hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
 
 interface SearchInputProps {
   value: string;
-  onChange: (text: string) => void;
   placeholder?: string;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, placeholder }) => {
+const SearchInput: React.FC<SearchInputProps> = ({ value, placeholder }) => {
   const [searchParam, setSearchParam] = useSearchParams();
 
   const handleInput = (newValue: string) => {
-    onChange(newValue);
+    const params = new URLSearchParams(searchParam);
 
     if (newValue) {
-      searchParam.set("search", newValue);
+      params.set("search", newValue);
     } else {
-      searchParam.delete("search");
+      params.delete("search");
     }
 
-    setSearchParam(searchParam);
+    params.delete("category");
+
+    setSearchParam(params);
   };
 
   return (
     <div style={{ position: "relative", width: "250px" }}>
       <p className="text-gray-700 font-bold">Search Bar</p>
+
       <input
         type="text"
         value={value}
-        placeholder={placeholder || "Search products"}
         onChange={(e) => handleInput(e.target.value)}
-        style={{
-          width: "80%",
-          padding: "8px 32px 8px 8px",
-          borderRadius: "6px",
-          border: "1px solid #ccc",
-        }}
+        placeholder={placeholder || "Search products"}
+        className="w-[80%] px-3 py-2 rounded-md border border-gray-300"
       />
-      <button
-        onClick={() => onChange("")}
-        style={{
-          position: "absolute",
-          right: "60px",
-          top: "70%",
-          transform: "translateY(-50%)",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "16px",
-          color: "#555",
-        }}
-      >
-        ✕
-      </button>
+
+      {value && (
+        <button
+          onClick={() => handleInput("")}
+          className="absolute right-[60px] top-1/2 -translate-y-1/2 text-gray-500 text-lg"
+        >
+          ✕
+        </button>
+      )}
     </div>
   );
 };
