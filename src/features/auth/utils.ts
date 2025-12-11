@@ -1,33 +1,14 @@
-const ACCESS_TOKEN_KEY = "accessToken";
-const REFRESH_TOKEN_KEY = "refreshToken";
-
 export const authStorage = {
-  getAccessToken: (): string | null => {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+  getToken: (name: string): string | null => {
+    return localStorage.getItem(name);
   },
 
-  setAccessToken: (token: string): void => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, token);
+  setToken: (name: string, token: string): void => {
+    localStorage.setItem(name, token);
   },
 
-  removeAccessToken: (): void => {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-  },
-
-  getRefreshToken: (): string | null => {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
-  },
-
-  setRefreshToken: (token: string): void => {
-    localStorage.setItem(REFRESH_TOKEN_KEY, token);
-  },
-
-  removeRefreshToken: (): void => {
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-  },
-
-  clear: (): void => {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
+  clear: (accessTokenName: string, refreshTokenName: string): void => {
+    localStorage.removeItem(accessTokenName);
+    localStorage.removeItem(refreshTokenName);
   },
 };

@@ -1,13 +1,16 @@
 import axios from "axios";
 import { authStorage } from "@/features/auth/utils";
 
+export const ACCESS_TOKEN_KEY = "accessToken";
+export const REFRESH_TOKEN_KEY = "refreshToken";
+
 const axiosInstance = axios.create({
   baseURL: "https://dummyjson.com",
   headers: { "Content-Type": "application/json" },
 });
 
 axiosInstance.interceptors.request.use((config) => {
-  const accessToken = authStorage.getAccessToken();
+  const accessToken = authStorage.getToken(ACCESS_TOKEN_KEY);
 
   if (accessToken && config.headers) {
     config.headers.Authorization = `Bearer ${accessToken}`;
@@ -21,10 +24,10 @@ axiosInstance.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
-    const refreshToken = authStorage.getRefreshToken();
+    const refreshToken = authStorage.getToken(REFRESH_TOKEN_KEY);
 
-    if (error.response?.status === 401 && refreshToken && !originalRequest._retry) {
-      originalRequest._retry = true;
+    if (error.response?.status === 401 && refreshToken && !originalRequest.retry) {
+      originalRequest.retry = true;
 
       try {
         const res = await axios.post("https://dummyjson.com/auth/refresh", {
@@ -33,17 +36,16 @@ axiosInstance.interceptors.response.use(
 
         const newAccessToken = res.data.token;
 
-        authStorage.setAccessToken(newAccessToken);
+        authStorage.setToken(ACCESS_TOKEN_KEY, newAccessToken);
 
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (err) {
-        authStorage.clear();
-        return Promise.reject(err);
+        authStorage.clear(ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY);
+        return Promise.reject((err: Error) => console.log("axios response error", err));
       }
     }
-
-    return Promise.reject(error);
+    return Promise.reject((error: Error) => console.log("axios response error", error));
   }
 );
 

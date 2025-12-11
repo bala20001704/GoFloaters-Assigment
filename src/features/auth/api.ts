@@ -1,4 +1,4 @@
-import axiosInstance from "@/services/api/axios";
+import axiosInstance, { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/services/api/axios";
 import type { LoginResponse, Users } from "./types";
 import { authStorage } from "./utils";
 
@@ -15,8 +15,8 @@ export const login = async (variables: LoginData): Promise<LoginResponse> => {
   });
 
   const { accessToken, refreshToken, ...userData } = res.data;
-  authStorage.setAccessToken(accessToken);
-  authStorage.setRefreshToken(refreshToken);
+  authStorage.setToken(ACCESS_TOKEN_KEY, accessToken);
+  authStorage.setToken(REFRESH_TOKEN_KEY, refreshToken);
   return {
     accessToken,
     refreshToken,

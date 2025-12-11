@@ -1,10 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./features/auth/Login";
-import { LoaderIcon, Toaster } from "react-hot-toast";
+import { LoaderIcon } from "react-hot-toast";
 import { useAuthUser } from "./features/auth/hooks";
 import Home from "./features/home/Home";
 import Layout from "./components/Layout/Layout";
 import ProductView from "./features/home/ProductView";
+import { Toaster } from "@/components/ui/sonner";
 
 const Router = () => {
   const { authUser, isLoading } = useAuthUser();
@@ -33,7 +34,6 @@ const Router = () => {
         />
         <Route path="/product/:id" element={<ProductView />}></Route>
       </Routes>
-
       <Toaster />
     </div>
   );

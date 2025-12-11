@@ -15,7 +15,13 @@ interface ApiError {
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  const { mutate: LoginMutate, isPending } = useMutation<LoginResponse, ApiError, LoginData>({
+  const {
+    mutate: loginMutate,
+    isPending,
+    isError,
+    isSuccess,
+    data,
+  } = useMutation<LoginResponse, ApiError, LoginData>({
     mutationFn: login,
     onSuccess: (data) => {
       toast.success(data.user.firstName);
@@ -25,8 +31,11 @@ export const useLogin = () => {
   });
 
   return {
-    LoginMutate,
+    loginMutate,
     isPending,
+    isError,
+    isSuccess,
+    data,
   };
 };
 
