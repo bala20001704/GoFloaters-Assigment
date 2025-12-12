@@ -1,6 +1,4 @@
-import { useState } from "react";
 import type { Product } from "./types";
-import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -44,9 +42,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <p className="font-bold text-sm">discount {product.discountPercentage} % OFF</p>
         </div>
         <p className="flex gap-1 mt-3">Rating {renderStars(product.rating)}</p>
-        <Badge className="text-orange-900 mt-2" variant="secondary">
-          {product.stock} - stocks available
-        </Badge>
+        <div className="flex items-center justify-between">
+          <Badge className="text-orange-900 mt-2" variant="secondary">
+            {product.stock} - stocks available
+          </Badge>
+          <Badge className="bg-green-800 text-white mt-2" variant="secondary">
+            {stock.label}
+          </Badge>
+        </div>
         <div className="flex gap-2 mt-5 mx-auto">
           <Button className="bg-blue-500 text-white hover:bg-blue-900 hover:text-white">View Button</Button>
           <Button className="bg-orange-900 text-white hover:bg-orange-950 hover:text-white">Add Button</Button>

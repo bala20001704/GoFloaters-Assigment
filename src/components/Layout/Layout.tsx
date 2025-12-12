@@ -10,7 +10,7 @@ const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ children }) => {
   return (
     <div className="h-screen flex">
       <SideBar />
-      <div className="container flex-1 bg-yellow-300">{children}</div>
+      <div className="container flex-1">{children}</div>
     </div>
   );
 };
