@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const ProductSkeleton = () => {
   return (
-    <div className="grid grid-cols-4 gap-4 p-5">
+    <>
       {[...Array(8)].map((_, idx) => (
         <div key={idx} className="w-full flex flex-col gap-0 border border-gray-300 rounded-sm h-[350px]">
           <Skeleton className="h-40 w-full rounded-t-xl" />
@@ -15,6 +15,6 @@ export const ProductSkeleton = () => {
           </div>
         </div>
       ))}
-    </div>
+    </>
   );
 };

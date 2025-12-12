@@ -15,11 +15,15 @@ const sortFilter = [
 
 const SortFilter: React.FC = () => {
   const [searchParam, setSearchParam] = useSearchParams();
+  const sortby = searchParam.get("sortby");
+
   return (
     <div className="flex items-center justify-center my-5">
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <div className="p-2 bg-blue-500 rounded-md px-10 border text-white font-medium">Sort</div>
+          <div className="p-2 bg-blue-500 rounded-md px-10 border text-white font-medium">
+            {sortby ? sortby : "Sort By"}
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {sortFilter.map((sort) => {
@@ -34,7 +38,14 @@ const SortFilter: React.FC = () => {
               </DropdownMenuItem>
             );
           })}
-          <DropdownMenuItem onClick={() => {}}>reset</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              searchParam.delete("sortby");
+              setSearchParam(searchParam);
+            }}
+          >
+            reset
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

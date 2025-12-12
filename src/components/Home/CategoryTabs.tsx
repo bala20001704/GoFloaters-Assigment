@@ -16,6 +16,8 @@ export const getCategoriesList = async (): Promise<string[]> => {
 export function CategoryTabs() {
   const [searchParam, setSearchParam] = useSearchParams();
 
+  const category = searchParam.get("category") || "";
+
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategoriesList,
@@ -34,13 +36,22 @@ export function CategoryTabs() {
     <div className="flex items-center justify-center my-5">
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <div className="p-2 bg-blue-500 rounded-md px-10 border text-white font-medium">Category</div>
+          <div className="p-2 bg-blue-500 rounded-md px-10 border text-white font-medium">
+            {category ? category : "Category"}
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {categories.map((category) => {
             return <DropdownMenuItem onClick={() => handleCategory(category)}>{category}</DropdownMenuItem>;
           })}
-          <DropdownMenuItem onClick={() => {}}>reset</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              searchParam.delete("category");
+              setSearchParam(searchParam);
+            }}
+          >
+            reset
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

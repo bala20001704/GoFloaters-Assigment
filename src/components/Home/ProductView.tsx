@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getProductById } from "./api";
+
 import { useMemo, useState } from "react";
+import { getProductById } from "@/features/home/api";
 
 const ProductView = () => {
   const { id } = useParams();

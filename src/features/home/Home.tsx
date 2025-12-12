@@ -1,14 +1,13 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { useFetchProduct } from "./hooks";
 import { useSearchParams } from "react-router-dom";
 import useDebounce from "@/hooks/useDebounce";
 import { CategoryTabs } from "../../components/Home/CategoryTabs";
 import RatingFilter from "../../components/Home/RatingFilter";
 import StockFilter from "../../components/Home/StockFilter";
-import { ProductSkeleton } from "../../components/Home/ProductGridSkeleton";
+import { ProductSkeleton } from "../../components/Home/ProductSkeleton";
 import SortFilter from "../../components/Home/SortFilter";
 import { X as Close } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
 import ProductCard from "@/components/Home/ProductCard";
 
 const Home = () => {
@@ -18,13 +17,14 @@ const Home = () => {
   const queryStock = searchParam.get("stock") || "all";
   const querySortBy = searchParam.get("sortby") || "price-asc";
   const queryRatings = searchParam.get("ratings") || "";
-  const initialRatings = queryRatings ? queryRatings.split(",").map(Number) : [];
-
-  const [selectedRatings, setSelectedRatings] = useState<number[]>(initialRatings);
+  const rating = queryRatings ? queryRatings.split(",").map(Number) : [];
 
   const debouncedSearch = useDebounce(querySearch, 500);
 
-  const { data, hasNextPage, fetchNextPage, isLoading } = useFetchProduct(debouncedSearch, queryCategory);
+  const { data, hasNextPage, fetchNextPage, isLoading, isFetchingNextPage } = useFetchProduct(
+    debouncedSearch,
+    queryCategory
+  );
 
   const allProducts = useMemo(() => {
     return data?.pages.flatMap((p) => p.products) || [];
@@ -34,14 +34,14 @@ const Home = () => {
     return allProducts
       .filter((p) => p.title.toLowerCase().includes(debouncedSearch.toLowerCase()))
       .filter((p) => (queryCategory ? p.category === queryCategory : true))
-      .filter((p) => (selectedRatings.length === 0 ? true : selectedRatings.includes(Math.floor(p.rating))))
+      .filter((p) => (rating.length === 0 ? true : rating.includes(Math.floor(p.rating))))
       .filter((p) => {
         if (queryStock === "all") return true;
         if (queryStock === "in") return p.stock > 10;
         if (queryStock === "low") return p.stock > 0 && p.stock <= 10;
         if (queryStock === "out") return p.stock === 0;
       });
-  }, [allProducts, debouncedSearch, queryCategory, selectedRatings, queryStock]);
+  }, [allProducts, debouncedSearch, queryCategory, rating, queryStock]);
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
@@ -67,18 +67,6 @@ const Home = () => {
     observer.observe(ref.current);
     return () => observer.disconnect();
   }, [hasNextPage, fetchNextPage]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParam);
-
-    if (selectedRatings.length > 0) {
-      params.set("ratings", selectedRatings.join(","));
-    } else {
-      params.delete("ratings");
-    }
-
-    setSearchParam(params);
-  }, [selectedRatings]);
 
   const handleInput = (newValue: string) => {
     const params = new URLSearchParams(searchParam);
@@ -107,7 +95,7 @@ const Home = () => {
               </div>
 
               <div className="p-4">
-                <RatingFilter selectedRatings={selectedRatings} onChange={setSelectedRatings} />
+                <RatingFilter selectedRatings={rating} />
               </div>
 
               <div className="p-5">
@@ -121,8 +109,8 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="flex-1 bg-amber-50 h-full overflow-auto">
-          <div className="p-5 bg-green-200 sticky top-0 z-10 rounded">
+        <div className="flex-1 h-full overflow-auto">
+          <div className="p-5 bg-white shadow sticky top-0 z-10 rounded">
             <div className="flex items-center justify-between">
               <p className="font-bold text-3xl">PRODUCTS</p>
               <div>
@@ -139,15 +127,20 @@ const Home = () => {
               </div>
             </div>
           </div>
-          {isLoading ? <ProductSkeleton /> : null}
+          {isLoading ? (
+            <div className="grid grid-cols-4 gap-4 p-5">
+              <ProductSkeleton />
+            </div>
+          ) : null}
           <div className="grid grid-cols-4 gap-4 p-5">
             {sorted.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
-          <div ref={ref} className="h-10 flex items-center justify-center">
-            <Spinner className="w-5 h-5" />
-          </div>
+
+            {isFetchingNextPage && <ProductSkeleton />}
+          </div>{" "}
+          {isFetchingNextPage ? <div className="mt-4"></div> : null}
+          <div ref={ref} className="h-10 flex items-center justify-center"></div>
         </div>
       </div>
     </div>

@@ -4,8 +4,8 @@ import { LoaderIcon } from "react-hot-toast";
 import { useAuthUser } from "./features/auth/hooks";
 import Home from "./features/home/Home";
 import Layout from "./components/Layout/Layout";
-import ProductView from "./features/home/ProductView";
 import { Toaster } from "@/components/ui/sonner";
+import ProductView from "./components/Home/ProductView";
 
 const Router = () => {
   const { authUser, isLoading } = useAuthUser();
