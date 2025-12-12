@@ -32,7 +32,14 @@ const Router = () => {
             </Layout>
           }
         />
-        <Route path="/product/:id" element={<ProductView />}></Route>
+        <Route
+          path="/product/:id"
+          element={
+            <Layout>
+              <ProductView />
+            </Layout>
+          }
+        ></Route>
       </Routes>
       <Toaster />
     </div>

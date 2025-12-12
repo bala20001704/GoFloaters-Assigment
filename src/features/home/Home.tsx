@@ -109,7 +109,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="flex-1 h-full overflow-auto">
+        <div className="flex-1 h-full overflow-auto ">
           <div className="p-5 bg-white shadow sticky top-0 z-10 rounded">
             <div className="flex items-center justify-between">
               <p className="font-bold text-3xl">PRODUCTS</p>
