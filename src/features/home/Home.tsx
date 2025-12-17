@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useRef } from "react";
 import { useFetchProduct } from "./hooks";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import useDebounce from "@/hooks/useDebounce";
 import { CategoryTabs } from "../../components/Home/CategoryTabs";
 import RatingFilter from "../../components/Home/RatingFilter";
@@ -9,6 +9,7 @@ import { ProductSkeleton } from "../../components/Home/ProductSkeleton";
 import SortFilter from "../../components/Home/SortFilter";
 import { X as Close } from "lucide-react";
 import ProductCard from "@/components/Home/ProductCard";
+import { EmptyState } from "@/components/Home/EmptyState";
 
 const Home = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -54,6 +55,8 @@ const Home = () => {
   }, [filtered, querySortBy]);
 
   const ref = useRef<HTMLDivElement | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!ref.current) return;
@@ -120,9 +123,19 @@ const Home = () => {
                     type="text"
                     className="border p-2 border-gray-900 rounded-2xl w-96"
                     placeholder="Search your products....."
-                    onChange={(e) => handleInput(e.target.value)}
+                    value={querySearch}
+                    onChange={(e) => {
+                      handleInput(e.target.value);
+                    }}
                   />
-                  <Close className="absolute right-0" />
+                  <Close
+                    className="absolute right-0"
+                    onClick={() => {
+                      const params = new URLSearchParams(searchParam);
+                      params.delete("search");
+                      setSearchParam(params);
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -132,6 +145,14 @@ const Home = () => {
               <ProductSkeleton />
             </div>
           ) : null}
+          {sorted.length === 0 && (
+            <EmptyState
+              title="Your search product is not exist"
+              description="you searched product we dont have"
+              actionText="serach different product"
+              onAction={() => navigate("/home")}
+            />
+          )}
           <div className="grid grid-cols-4 gap-4 p-5">
             {sorted.map((product) => (
               <ProductCard key={product.id} product={product} />

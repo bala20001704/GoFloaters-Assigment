@@ -103,3 +103,11 @@ export interface Product {
   images: string[];
   thumbnail: string;
 }
+
+export type CartPayload = {
+  userId: number;
+  products: {
+    id: number;
+    quantity: number;
+  }[];
+};

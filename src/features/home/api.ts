@@ -1,6 +1,7 @@
 import axiosInstance from "@/services/api/axios";
-import type { ProductsResponse } from "./types";
+import type { CartPayload, ProductsResponse } from "./types";
 import type { Product } from "./types";
+import type { Cart } from "../cart/types";
 
 const LIMIT = 30;
 
@@ -35,4 +36,10 @@ export const getCategoriesList = async (): Promise<string[]> => {
 export const getProductById = async (productId: string): Promise<Product> => {
   const res = await axiosInstance.get(`/products/${productId}`);
   return res.data;
+};
+
+export const addCartItem = async (payload: CartPayload): Promise<Cart> => {
+  const response = await axiosInstance.post("https://dummyjson.com/carts/add", payload);
+  console.log(response.data);
+  return response.data;
 };

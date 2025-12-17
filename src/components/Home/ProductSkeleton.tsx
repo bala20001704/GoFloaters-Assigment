@@ -4,7 +4,7 @@ export const ProductSkeleton = () => {
   return (
     <>
       {[...Array(8)].map((_, idx) => (
-        <div key={idx} className="w-full flex flex-col gap-0 border border-gray-300 rounded-sm h-[350px]">
+        <div key={idx} className="w-full flex flex-col gap-0 border border-gray-300 rounded-sm full">
           <Skeleton className="h-40 w-full rounded-t-xl" />
           <div className="p-3 flex flex-col gap-2">
             <Skeleton className="h-4 w-full rounded" />

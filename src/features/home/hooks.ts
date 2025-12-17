@@ -1,6 +1,7 @@
-import { useInfiniteQuery, type InfiniteData } from "@tanstack/react-query";
-import { getProducts, getProductsCategory, getProductsBySearch } from "./api";
-import type { ProductsResponse } from "./types";
+import { useInfiniteQuery, useMutation, type InfiniteData } from "@tanstack/react-query";
+import { getProducts, getProductsCategory, getProductsBySearch, addCartItem } from "./api";
+import type { CartPayload, ProductsResponse } from "./types";
+import type { Cart } from "../cart/types";
 
 const limits = 30;
 
@@ -31,4 +32,12 @@ export const useFetchProduct = (searchQuery: string, category: string) => {
       return totalPages.length * 30;
     },
   });
+};
+
+export const useAddCartItem = () => {
+  const { mutate: addToCart, isPending } = useMutation<Cart, Error, CartPayload>({ mutationFn: addCartItem });
+  return {
+    addToCart,
+    isPending,
+  };
 };

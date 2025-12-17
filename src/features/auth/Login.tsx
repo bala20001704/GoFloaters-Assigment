@@ -6,8 +6,6 @@ import { User } from "lucide-react";
 import { useLogin } from "./hooks";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
-import { authStorage } from "./utils";
-import { ACCESS_TOKEN_KEY } from "@/services/api/axios";
 
 const loginSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters." }),
@@ -18,7 +16,6 @@ type loginDataType = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const { loginMutate, isPending, isError, isSuccess, data } = useLogin();
-  console.log("REs:", data);
 
   const {
     register,

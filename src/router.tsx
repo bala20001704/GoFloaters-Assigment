@@ -1,15 +1,16 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "./features/auth/Login";
-import { LoaderIcon } from "react-hot-toast";
+import { LoaderIcon } from "lucide-react";
 import { useAuthUser } from "./features/auth/hooks";
-import Home from "./features/home/Home";
+import { Navigate, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./components/Routes/ProtectedRoute";
 import Layout from "./components/Layout/Layout";
-import { Toaster } from "@/components/ui/sonner";
-import ProductView from "./components/Home/ProductView";
+import Home from "./features/home/Home";
+import ProductView from "./features/home/ProductDetails";
+import Cart from "./features/cart/cart";
+import { Toaster } from "./components/ui/sonner";
+import Login from "./features/auth/Login";
 
-const Router = () => {
+export const Router = () => {
   const { authUser, isLoading } = useAuthUser();
-  const isAuthenticated = Boolean(authUser);
 
   if (isLoading) {
     return (
@@ -20,30 +21,56 @@ const Router = () => {
   }
 
   return (
-    <div>
+    <>
       <Routes>
-        <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />}></Route>
-        <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" />}></Route>
+        <Route path="/login" element={authUser ? <Navigate to="/home" replace /> : <Login />} />
+
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Home />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/home"
           element={
-            <Layout>
-              <Home />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Home />
+              </Layout>
+            </ProtectedRoute>
           }
         />
+
         <Route
           path="/product/:id"
           element={
-            <Layout>
-              <ProductView />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <ProductView />
+              </Layout>
+            </ProtectedRoute>
           }
-        ></Route>
+        />
+
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Cart />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
+
       <Toaster />
-    </div>
+    </>
   );
 };
-
-export default Router;

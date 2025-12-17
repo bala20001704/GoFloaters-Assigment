@@ -19,12 +19,12 @@ export default function StockFilter({ stockFilter }: StockFilterProps) {
     <div className="flex flex-col gap-3 border rounded-lg shadow-lg p-3">
       <h3 className="font-medium text-gray-700 text-center">Stock Status</h3>
 
-      {stockOptions.map((option) => {
+      {stockOptions.map((option, idx) => {
         const isSelected = option.value === stockFilter;
 
         return (
           <>
-            <RadioGroup>
+            <RadioGroup key={idx}>
               <div className="flex items-center gap-3">
                 <RadioGroupItem
                   value={option.value}

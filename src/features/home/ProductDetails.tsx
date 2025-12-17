@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Spinner } from "@/components/ui/spinner";
 
 const sortDropDownItem: { label: string; value: "most" | "high" | "low" }[] = [
   { label: "Most Recent", value: "most" },
@@ -49,7 +50,7 @@ const ProductView = () => {
   }, [sort, product]);
 
   if (!product) {
-    return <>Loading.................</>;
+    return <Spinner />;
   }
 
   const handleSort = (value: "most" | "high" | "low") => {

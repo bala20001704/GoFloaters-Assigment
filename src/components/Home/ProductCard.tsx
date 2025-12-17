@@ -1,12 +1,23 @@
-import type { Product } from "./types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAuthUser } from "@/features/auth/hooks";
+import { addCartItem } from "@/features/home/api";
+import type { Product } from "@/features/home/types";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { authUser } = useAuthUser();
+
+  const navigate = useNavigate();
+
+  const handleViewDetailsClick = (id: number) => {
+    navigate(`/product/${id}`);
+  };
+
   const getStockStatus = () => {
     if (product.stock === 0) return { label: "Out of Stock", color: "#dc2626" };
     if (product.stock <= 10) return { label: "Low Stock", color: "#f59e0b" };
@@ -51,8 +62,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </Badge>
         </div>
         <div className="flex gap-2 mt-5 mx-auto">
-          <Button className="bg-blue-500 text-white hover:bg-blue-900 hover:text-white">View Button</Button>
-          <Button className="bg-orange-900 text-white hover:bg-orange-950 hover:text-white">Add Button</Button>
+          <Button
+            className="bg-blue-500 text-white hover:bg-blue-900 hover:text-white"
+            onClick={() => handleViewDetailsClick(product.id)}
+          >
+            View
+          </Button>
+          <Button
+            className="bg-orange-900 text-white hover:bg-orange-950 hover:text-white"
+            onClick={() => {
+              const payload = { userId: authUser!.id, products: [{ id: product.id, quantity: 1 }] };
+              addCartItem(payload);
+            }}
+          >
+            Add to Cart
+          </Button>
         </div>
       </div>
     </div>
